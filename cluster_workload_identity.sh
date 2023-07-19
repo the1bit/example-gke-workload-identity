@@ -7,11 +7,11 @@ fi
 
 # TODO: ensure the following variable match your environment, especially
 # the zone, project, bucket, and network.
-ZONE=europe-west4-a
-PROJECT=workload-identity-playground-123456
-BUCKET=gke-workload-identity-playground-bucket
-NETWORK=production-network  # usually "default"
-CLUSTER=storage-consumer
+ZONE=europe-west1-b
+PROJECT=smart-tractor-389208
+BUCKET=cloudsteak-wi-bucket
+NETWORK=default  # usually "default"
+CLUSTER=gke-wi
 DEPLOYMENT_NAME=example-gke-workload-identity
 
 # GSA is the service account that the *pods* will use to access Google Cloud Platform.
@@ -28,15 +28,15 @@ else
   echo "No current state was found, randomized new suffix of ${SUFFIX}"
   echo "$SUFFIX" > "${STATE_FILENAME}"
 fi
-GSA="storage-consumer-gsa-${SUFFIX}"
+GSA="gke-wi-gsa-${SUFFIX}"
 
 # To use static names, just use below.
-# GSA=storage-consumer-gsa
+# GSA=gke-wi-gsa
 
 # Kubernetes service account and namespace. Don't need to be suffixed.
 # If you modify the namespace, you also need to change the deployment.
-KSA=storage-consumer-ksa
-K8S_NAMESPACE=storage-consumer-ns
+KSA=gke-wi-ksa
+K8S_NAMESPACE=gke-wi-ns
 
 # We create a very restricted service account to run cluster nodes.
 RUNNER_GSA=gke-runner-acc
@@ -67,7 +67,7 @@ if [[ "$1" == "create" ]]; then
     --zone="$ZONE" \
     --network="${NETWORK}" \
     --metadata disable-legacy-endpoints=true \
-    --identity-namespace="$PROJECT".svc.id.goog \
+    --workload-pool="$PROJECT".svc.id.goog \
     --service-account="${RUNNER_GSA_FULL}"
 
   # create service account that the pod should use
@@ -122,7 +122,7 @@ fi
 
 if [[ "$1" == "destroy" ]]; then
   # to delete cluster when done
-  gcloud container clusters delete storage-consumer --zone="$ZONE"
+  gcloud container clusters delete gke-wi --zone="$ZONE"
 
   # delete service account, and its assigned roles.
   gcloud iam service-accounts remove-iam-policy-binding --role roles/iam.workloadIdentityUser --member "serviceAccount:${PROJECT}.svc.id.goog[${K8S_NAMESPACE}/${KSA}]" "${GSA_FULL}"

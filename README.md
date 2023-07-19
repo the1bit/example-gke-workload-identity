@@ -2,4 +2,4 @@
 
 This repository contains some example code used to test Workload identity on Google Kubernetes Engine.
 
-See the blog post at https://debricked.com/blog (coming soon) for more details.
+See the blog post at https://debricked.com/blog/what-is-gke-workload-identity/ for more details.

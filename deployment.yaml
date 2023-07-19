@@ -1,9 +1,9 @@
 # This deployment describes the pods.
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: example-gke-workload-identity
-  namespace: storage-consumer-ns
+  namespace: gke-wi-ns
 spec:
   replicas: 2
   selector:
@@ -14,11 +14,11 @@ spec:
       labels:
         app: hello
     spec:
-      serviceAccountName: storage-consumer-ksa
+      serviceAccountName: gke-wi-ksa
       containers:
       - name: hello-app
         # TODO: Replace with your own image, or use the debricked example.
-        image: debricked/example-gke-workload-identity-app:latest
+        image: cloudsteak/storage-explorer:latest
         ports:
         - containerPort: 8080
         env:
@@ -26,5 +26,5 @@ spec:
             value: "8080"
         # TODO: replace with your own bucket name.
           - name: BUCKET_NAME
-            value: gke-workload-identity-playground-bucket
+            value: cloudsteak-wi-bucket
 

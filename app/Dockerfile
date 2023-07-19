@@ -1,9 +1,9 @@
-FROM node:12-slim
+FROM node:18-slim
 
 USER node
 
 WORKDIR /home/node
-COPY package*.json ./
+COPY --chown=node:node package*.json ./
 
 RUN npm install --only=production
 COPY . .
